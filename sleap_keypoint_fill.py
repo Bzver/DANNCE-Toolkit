@@ -1,8 +1,6 @@
 import numpy as np
 import h5py
 
-############   W   ############   I   ############   P   ############
-
 def get_vector_from_points(p1, p2):
     p1 = np.asarray(p1)
     p2 = np.asarray(p2)
