@@ -11,6 +11,28 @@ def get_new_point(start_point, direction_vector, multiplier=0.5):
     return start_point + multiplier * direction_vector
 
 def keypoiny_duplicator(sleap_file, num_bodypart, head_tail=None, tail_scheme=None, limb_scheme=None):
+    """
+    Duplicates and fills in missing keypoints in a SLEAP HDF5 file based on specified schemes.
+
+    This function takes a SLEAP HDF5 file, reads the keypoint data, and then
+    fills in missing keypoints (NaN values) based on either a tail extension scheme
+    or a limb extension scheme. It modifies the 'points' dataset within the HDF5 file.
+
+    Args:
+        sleap_file (str): The path to the SLEAP HDF5 file.
+        num_bodypart (int): The number of body parts per frame in the SLEAP data.
+        head_tail (tuple, optional): A tuple (head_index, tail_index) used to calculate
+                                     the body vector for tail extension. Indices are 1-based.
+                                     If None, a random direction is used for tail extension.
+        tail_scheme (list of tuples, optional): A list of (source_index, new_index) tuples
+                                                for tail keypoint duplication. Indices are 1-based.
+                                                The new_index keypoint will be extended from the
+                                                source_index keypoint along the body vector.
+        limb_scheme (list of tuples, optional): A list of (source_index, new_index) tuples
+                                                for limb keypoint duplication. Indices are 1-based.
+                                                The new_index keypoint will be extended from the
+                                                source_index keypoint using a small random vector.
+    """
     if tail_scheme is None and limb_scheme is None:
         print("tail_scheme and limb_scheme not provided, no changes will be made.")
         return
@@ -67,4 +89,3 @@ if __name__ == "__main__":
     tailExtensiontChart = [(4,11),(11,12)]
     LimbExtensiontChart = [(7,13),(8,14),(9,15),(10,16)]
     keypoiny_duplicator(sleap_file, 16, head_tail=head2tailIndex, tail_scheme=tailExtensiontChart, limb_scheme=LimbExtensiontChart)
-
