@@ -8,16 +8,16 @@ addpath(genpath('skeletons'))
 
 %% Setting time! SET THESE BEFORE YOU DO ANYTHING!!!
 
-%projectFolder = fullfile('D:\Project\SDANNCE-Models\4CAM-3D-2ETUP\SD-20250517-seg4\');
-projectFolder = fullfile('D:\Project\SDANNCE-Models\555-5CAM\SD-20250605B');
+projectFolder = fullfile('D:\Project\SDANNCE-Models\4CAM-3D-2ETUP\SD-20250526');
 
 framesToLabel = 1:10:1000; % Only used when isInitialLabeling
+numViews = 4; % Only used when isInitialLabeling
 
 ChosenOne = '';
 
-isInitialLabeling = 0;
+isInitialLabeling = 1;
 isLoadingImplant = 0;
-isExporting = 1;
+isExporting = 0;
 isCOM = 0;
 isChosenOne = 0;
 
@@ -81,7 +81,12 @@ sync = cellfun(@(X) {load(X)}, sync);
 calibPaths = collectCalibrationPaths(projectFolder);
 params = cellfun(@(X) {load(X)}, calibPaths);
 
-numCam = length(matfile(labelled_data).camParams);
+if isInitialLabeling == 1
+    numCam = numViews;
+else
+    numCam = length(matfile(labelled_data).camParams);
+end
+
 if isempty(sync)
     dannce_file = dir(fullfile(projectFolder, '*dannce.mat'));
     if numCam == 5
