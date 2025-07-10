@@ -2,7 +2,7 @@ clear all;
 cd 'D:\Repository\Label3D'
 
 %%
-numCam = 5;
+numCam = 4;
 
 start_frame = 4275;
 step_size = 25;
@@ -13,9 +13,9 @@ videoResolution = [960, 540]; % Per view
 confidence_threshold = 0; % 0 to 1
 distort = true;
 
-isCOM = 0;
+isCOM = 1;
 isLowconf = 0;
-isManual = 1;
+isManual = 0;
 
 %%
 if numCam == 4
@@ -36,11 +36,13 @@ if isManual == 1
 end
 
 if isCOM == 1
-    load('com3d.mat')
+    load('instance0com3d.mat')
     skeleton = load('skeletons/com');
     if max_frame > size(com,1)
         max_frame = size(com,1);
     end
+    numBodyparts = 1;
+    start_sample = 0;
     framesToLabel = start_frame:step_size:max_frame;
     data_3D = com;
 else % Loading 3D data from prediction
@@ -77,8 +79,9 @@ else % Loading 3D data from prediction
             error("Error: No intersect found between confidence cutoff and frames to label! Readjust parameters.")
         end
     end
-numFrames = length(framesToLabel);
 end
+numFrames = length(framesToLabel);
+
 data_3D = data_3D(framesToLabel,:);
 
 status = 2*ones(1, numCam, numFrames);
