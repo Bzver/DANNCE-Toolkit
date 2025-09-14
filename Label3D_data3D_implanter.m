@@ -9,7 +9,7 @@ manualFrames = [];
 % Only used when manual frames is not supplied
 startFrame = 0;
 stepSize = 25;
-maxFrame = 5000;
+maxFrame = 4000;
 
 videoResolution = [960, 540]; % Per view
 distort = false;
@@ -18,7 +18,7 @@ distort = false;
 isCOM = 0;
 
 % Set this to 1 if dealing with multiple animals
-isMultiAnimal = 1;
+isMultiAnimal = 0;
 idx = 1; % Animal index to extract
 
 %%
@@ -51,14 +51,18 @@ else % Loading 3D data from prediction
     start_sample = sampleID(1); % In case AVGData starts with frames bigger than 0
     skeleton = load('skeletons/rat16');
     pred_sqz = squeeze(pred(:,idx,:,:));
-    num_keypoint = length(skeleton.joint_names);
-    data_3D = reshape(permute(pred_sqz, [1,3,2]), size(pred_sqz,1), num_keypoint*3);
+    data_3D = nan(size(pred_sqz,1), length(skeleton.joint_names)*3);
+    for j = 1:size(pred_sqz,3)
+        for ok = 1:size(pred_sqz,2)
+            data_3D(:,ok+3*(j-1)) = pred_sqz(:,ok,j);
+        end
+    end
 end
 num_keypoint = length(skeleton.joint_names);
 numFrames = length(framesToLabel);
 framesToLabel = framesToLabel(framesToLabel>0 & framesToLabel<size(data_3D,1));
 data_3D = data_3D(framesToLabel,:);
-status = 2*ones(1, numCam, numFrames);
+status = ones(1, numCam, numFrames);
 framesToLabel = framesToLabel + start_sample;
 handLabeled2D = NaN(num_keypoint,numCam,2,numFrames);
 
