@@ -1,11 +1,10 @@
 clear all;
 
-folder = "SD-20250605M-4cam";
-cwd = "D:\Project\SDANNCE-Models\4CAM-3D-2ETUP\"+folder;
+folder = "SD-20250910-c55toe1-4cam";
+cwd = "D:\Project\SDANNCE-Models\666-6CAM\"+folder;
 cd(cwd)
 
 %%
-
 finalViews = 4;
 
 %%
@@ -21,20 +20,23 @@ for m = 1:length(matfiles)
     currentmat = load(matname);
     curmatvars = fieldnames(currentmat);
     isDannce = ismember('labelData', curmatvars);
-    if isDannce
-        initialViews = length(currentmat.camnames);
-        if initialViews > finalViews
-            camnames = currentmat.camnames(1,1:finalViews);
+    initialViews = length(currentmat.camnames);
+    if initialViews > finalViews
+        camnames = currentmat.camnames(1,1:finalViews);
+        params = currentmat.params(1:finalViews,1);
+        sync = currentmat.sync(1:finalViews,1);
+        if isDannce
             handLabeled2D = currentmat.handLabeled2D(:,1:finalViews,:,:);
             labelData = currentmat.labelData(1:finalViews,1);
-            params = currentmat.params(1:finalViews,1);
-            sync = currentmat.sync(1:finalViews,1);
-        elseif initialViews < finalViews
-            disp("2 B implemented LOL")
-        else
-            disp("wat")
         end
-        save(matname,"camnames","handLabeled2D","labelData","params","sync");
-        disp(matname+" saved!")
+    else
+        disp("Unimplemented")
     end
+    if isDannce
+        save(matname,"camnames","handLabeled2D","labelData","params","sync");
+    else
+        save(matname,"camnames","params","sync");
+    end
+    disp(matname+" saved!")
+
 end
