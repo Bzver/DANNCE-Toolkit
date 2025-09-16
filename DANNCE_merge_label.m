@@ -6,7 +6,7 @@ cd(cwd)
 
 %%
 
-isPicker = 0;
+isPicker = 0;  % Only include the pickerView views in the merged label file
 
 pickerView = 5; % [2,3,4]
 numCam = 4;
