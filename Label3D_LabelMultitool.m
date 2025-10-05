@@ -1,40 +1,47 @@
 clear all;
-dataDir = 'D:\Repository\Label3D';
+dataDir = 'D:\Repository\Label3D-mod';
 
 %%
+ChosenOne = "maus2_labeled.mat";
+
 isDuplicate = 0;
 isPointDuplicate = 0;
 isEraser = 0;
-isDestroyer = 1; % WARNING!!! BACKUP BEFORE USING!!!
+isDestroyer = 1;
 isPointDestroy = 0;
 
 %%
-matFiles = dir(fullfile(dataDir, '*_Label3D.mat'));
-if isempty(matFiles)
-    error('No .mat files with the pattern *_Label3D.mat found in the specified directory.');
+if isempty(ChosenOne)
+    matFiles = dir(fullfile(dataDir, '*_Label3D.mat'));
+    if isempty(matFiles)
+        error('No .mat files with the pattern *_Label3D.mat found in the specified directory.');
+    end
+    
+    fileDates = NaT(length(matFiles), 1); % Initialize an array of Not-a-Time
+    filenameFormat = 'yyyyMMdd_HHmmss'; % Format of the date/time in your filename
+    for i = 1:length(matFiles)
+        fileName = matFiles(i).name;
+        try
+            underscoreIdx = strfind(fileName, '_');
+            if length(underscoreIdx) >= 2
+                dateTimeStr = fileName(1 : underscoreIdx(2)-1);
+                fileDates(i) = datetime(dateTimeStr, 'InputFormat', filenameFormat);
+            else
+                warning(['Could not parse date from filename: ', fileName]);
+            end
+        catch ME
+            warning(['Error parsing date from filename: ', fileName, ' - ', ME.message]);
+            fileDates(i) = NaT;
+        end
+    end
+    [~, newestIdx] = max(fileDates);
+    newestFileName = fullfile(dataDir, matFiles(newestIdx).name);
+else
+    newestFileName = fullfile(dataDir, ChosenOne);
 end
 
-fileDates = NaT(length(matFiles), 1); % Initialize an array of Not-a-Time
-filenameFormat = 'yyyyMMdd_HHmmss'; % Format of the date/time in your filename
-for i = 1:length(matFiles)
-    fileName = matFiles(i).name;
-    try
-        underscoreIdx = strfind(fileName, '_');
-        if length(underscoreIdx) >= 2
-            dateTimeStr = fileName(1 : underscoreIdx(2)-1);
-            fileDates(i) = datetime(dateTimeStr, 'InputFormat', filenameFormat);
-        else
-            warning(['Could not parse date from filename: ', fileName]);
-        end
-    catch ME
-        warning(['Error parsing date from filename: ', fileName, ' - ', ME.message]);
-        fileDates(i) = NaT;
-    end
-end
-[~, newestIdx] = max(fileDates);
-newestFileName = fullfile(dataDir, matFiles(newestIdx).name);
 load(newestFileName);
-disp("Loading "+string(matFiles(newestIdx).name))
+disp("Loading "+ string(newestFileName))
 
 %%
 if isDuplicate == 1
@@ -88,6 +95,10 @@ elseif isEraser == 1
         save(newestFileName, 'camParams', 'cameraPoses', 'data_3D', 'imageSize', 'skeleton', 'status', "handLabeled2D","framesToLabel");
     end
 elseif isDestroyer == 1
+    timestamp = datetime('now', 'Format', 'yyyyMMdd_HHmmss');
+    backupFileName = strrep(newestFileName, '.mat', sprintf('_backup_%s.mat', string(timestamp)));
+    copyfile(newestFileName, backupFileName);
+    disp('Backup created: ' + backupFileName);
     if isPointDestroy == 0
         lastofFrame = floor(input('Enter the end of the frames you wish NOT to destroy: '));
         if lastofFrame > 1

@@ -1,6 +1,6 @@
 clear all;
 
-cd('D:\Project\SDANNCE-Models\20250526')
+cd('D:\Project\SDANNCE-Models\4CAM-3D-2ETUP\SD-20250705-MULTI')
 newOrder = struct('K',1,'RDistort',1,'TDistort',1,'r',1,'t',1);
 
 matfiles = dir('*.mat');
@@ -15,5 +15,6 @@ for m = 1:length(matfiles)
             currentmat.params{i} = orderfields(currentmat.params{i},newOrder);
         end
         save(matname, '-struct', 'currentmat');
+        disp(matname)
     end
 end

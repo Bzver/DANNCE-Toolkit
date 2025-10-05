@@ -1,6 +1,6 @@
 clear all;
 
-folder = "D:\Project\SDANNCE-Models\4CAM-3D-2ETUP\SD-20250605M-4cam";
+folder = "D:\Project\SDANNCE-Models\555-5CAM\SD-20250605M";
 
 %%
 
@@ -24,4 +24,5 @@ for k = 1:length(matfiles)
     end
     
     save(matfile.replace("_Label3D_dannce", "_COM_dannce"), "camnames", "labelData", "params", "sync")
+    disp("Successful processed " + matfile)
 end
