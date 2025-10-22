@@ -2,7 +2,7 @@ clear all;
 dataDir = 'D:\Repository\Label3D-mod';
 
 %%
-ChosenOne = "maus2_labeled.mat";
+ChosenOne = "";
 
 isDuplicate = 0;
 isPointDuplicate = 0;
@@ -11,7 +11,7 @@ isDestroyer = 1;
 isPointDestroy = 0;
 
 %%
-if isempty(ChosenOne)
+if isempty(char(ChosenOne))
     matFiles = dir(fullfile(dataDir, '*_Label3D.mat'));
     if isempty(matFiles)
         error('No .mat files with the pattern *_Label3D.mat found in the specified directory.');
@@ -98,7 +98,7 @@ elseif isDestroyer == 1
     timestamp = datetime('now', 'Format', 'yyyyMMdd_HHmmss');
     backupFileName = strrep(newestFileName, '.mat', sprintf('_backup_%s.mat', string(timestamp)));
     copyfile(newestFileName, backupFileName);
-    disp('Backup created: ' + backupFileName);
+    disp(['Backup created: ' backupFileName]);
     if isPointDestroy == 0
         lastofFrame = floor(input('Enter the end of the frames you wish NOT to destroy: '));
         if lastofFrame > 1

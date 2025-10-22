@@ -2,13 +2,13 @@ clear all;
 cd 'D:\Repository\Label3D-mod'
 
 %%
-numCam = 4;
+numCam = 6;
 
 manualFrames = [];
 
 % Only used when manual frames is not supplied
 startFrame = 0;
-stepSize = 25;
+stepSize = 100;
 maxFrame = 4000;
 
 videoResolution = [960, 540]; % Per view
@@ -24,8 +24,8 @@ idx = 1; % Animal index to extract
 %%
 if numCam == 4
     hostname = 'viewer-host.mat';
-elseif numCam == 5
-    hostname = 'viewer-host-5cam.mat';
+else
+    hostname = 'viewer-host-' + string(numCam) + 'cam.mat';
 end
 load(hostname);
 
